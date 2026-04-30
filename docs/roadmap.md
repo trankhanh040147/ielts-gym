@@ -15,7 +15,9 @@
 - Claude Code handoff: `docs/superpowers/plans/2026-04-28-week-1-mvp-handoff.md`
 
 ## Day2: 29/04/2026 - Next
-- Làm rõ lại workflow design: Mình có thể tận dụng Claude Design để thiết kế design cho sản phẩm, bước này nên làm khi nào ?
+- Workflow UI decision: chọn `Polish-later`. Chưa dùng Claude Design ngay; dùng sau khi có screen thật, khoảng Day 5, để polish visual hierarchy/demo trust.
 - Handoff cho Claude Code bắt đầu bằng brainstorming trước khi implement.
-- Dựng demo skeleton cho flow: prompt -> debate ideas -> outline -> essay editor -> feedback.
-- Có thể dùng mocked AI responses trước để đảm bảo user thấy được toàn bộ luồng.
+- Dựng `Idea-to-essay functional slice`: prompt -> stance/thesis/main ideas/examples/paragraph plan -> essay editor -> mocked feedback preview.
+- AI scope: thử AI thật cho phần triển khai ý/outline nếu nhanh; nếu lỗi thì dùng mocked fallback để không block demo.
+- Chưa làm real AI feedback trong Day 2.
+- Spec: `docs/superpowers/specs/2026-04-29-day-2-idea-to-essay-design.md`

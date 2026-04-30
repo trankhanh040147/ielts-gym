@@ -13,6 +13,7 @@
 ## Source Documents
 
 - Product spec: `docs/superpowers/specs/2026-04-28-day-1-mvp-design.md`
+- Day 2 spec: `docs/superpowers/specs/2026-04-29-day-2-idea-to-essay-design.md`
 - Roadmap seed: `docs/roadmap.md`
 
 ## Product Decisions That Must Not Change
@@ -100,10 +101,10 @@ The first working version should show these steps in order:
 
 ```text
 1. Enter IELTS Task 2 prompt
-2. Debate ideas
-3. Review outline
+2. Generate or view idea-to-essay plan
+3. Review stance, thesis, main ideas, examples, and paragraph plan
 4. Write essay
-5. View feedback
+5. View mocked feedback preview
 ```
 
 Acceptance: a user can click or move through every step without real AI integration.
@@ -126,39 +127,41 @@ Run the app using the chosen dev command.
 
 Expected: the app loads locally and the full mocked flow is reachable.
 
-## Task 3: Implement AI Debate And Outline
+## Task 3: Implement Idea-To-Essay Plan
 
 **Files:**
 
-- Create or modify AI prompt logic for idea debate.
+- Create or modify AI prompt logic for idea development and essay planning.
 - Create or modify AI provider wrapper.
-- Modify product flow screen to use the debate result.
+- Modify product flow screen to use the idea-to-essay plan.
 
-- [ ] **Step 1: Define the debate output contract**
+- [ ] **Step 1: Define the idea-to-essay output contract**
 
-The debate/outline result must contain these fields, regardless of implementation language:
+The idea-to-essay result must contain these fields, regardless of implementation language:
 
 ```json
 {
-  "position": "string",
+  "stance": "string",
   "thesis": "string",
   "mainIdeas": [
     {
       "claim": "string",
-      "support": "string",
-      "example": "string"
+      "supportingPoint": "string",
+      "example": "string",
+      "paragraphPurpose": "string"
     }
   ],
   "counterpoint": "string",
-  "writingPlan": ["string"]
+  "paragraphPlan": ["string"],
+  "writingTips": ["string"]
 }
 ```
 
 Acceptance: the UI can render the result without parsing free-form prose.
 
-- [ ] **Step 2: Keep debate bounded**
+- [ ] **Step 2: Keep planning bounded**
 
-Implement the debate so it asks a small number of focused questions or produces an outline quickly from available user input.
+Implement the planning flow so it quickly turns a Task 2 prompt into a usable stance, thesis, main ideas, examples, and paragraph plan.
 
 Acceptance: the user is guided toward writing, not trapped in open-ended chat.
 
@@ -167,6 +170,12 @@ Acceptance: the user is guided toward writing, not trapped in open-ended chat.
 If AI output fails or is malformed, preserve user input and show a retry option or mocked fallback.
 
 Acceptance: the demo does not lose the prompt or user answers when AI fails.
+
+- [ ] **Step 4: Keep feedback mocked for Day 2**
+
+Do not implement real AI essay feedback in Day 2 unless explicitly requested later.
+
+Acceptance: the final step can show mocked feedback preview while making clear that the Day 2 focus is idea-to-essay planning.
 
 ## Task 4: Implement Essay Feedback
 
@@ -279,7 +288,7 @@ Before claiming the Week 1 demo is ready, verify:
 
 - [ ] The app runs locally with the chosen dev command.
 - [ ] The golden demo path works from prompt to feedback.
-- [ ] The debate produces a thesis, two main ideas, and examples.
+- [ ] The idea-to-essay plan produces a stance, thesis, main ideas, examples, and paragraph plan.
 - [ ] Feedback includes band estimate, top issues, rewrite sample, and next actions.
 - [ ] User essay text is not lost on feedback failure.
 - [ ] Week 1 exclusions remain excluded.
@@ -292,7 +301,7 @@ Commit after each stable task if the user wants commits:
 ```bash
 git add <changed-files>
 git commit -m "feat: scaffold writing demo flow"
-git commit -m "feat: add idea debate outline flow"
+git commit -m "feat: add idea-to-essay planning flow"
 git commit -m "feat: add structured essay feedback"
 git commit -m "polish: improve week 1 demo path"
 ```
