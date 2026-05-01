@@ -1,33 +1,20 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import type { Metadata } from 'next'
+import { Geist } from 'next/font/google'
+import './globals.css'
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const geist = Geist({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: "IELTS Gym — Writing Task 2 Practice",
-  description: "AI-powered IELTS Writing Task 2 coaching for band 5.5–6.5 learners.",
-};
+  title: 'IELTS Gym — Writing Task 2 Practice',
+  description: 'AI-powered IELTS Writing Task 2 coaching for band 5.5–6.5 learners.',
+}
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html lang="en">
+      <body className={`${geist.className} min-h-screen bg-background antialiased`}>
+        {children}
+      </body>
     </html>
-  );
+  )
 }
