@@ -59,12 +59,15 @@ export default function DebateStep({
       </div>
 
       {debateRound === 1 && (
-        <Button
-          onClick={onConfirmPosition}
-          disabled={!userPosition || isLoading}
-        >
-          {isLoading ? 'Loading…' : 'Continue →'}
-        </Button>
+        <div className="flex flex-col gap-2">
+          <Button
+            onClick={onConfirmPosition}
+            disabled={!userPosition || isLoading}
+          >
+            {isLoading ? 'Loading…' : 'Continue →'}
+          </Button>
+          {error && <p className="text-sm text-destructive">{error}</p>}
+        </div>
       )}
 
       {debateRound === 2 && debateFollowUp && (
