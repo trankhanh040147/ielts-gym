@@ -85,6 +85,15 @@ function reducer(state: AppState, action: AppAction): AppState {
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? ''
 
+const STEP_LABELS: Record<AppStep, string> = {
+  prompt: 'Prompt',
+  debate: 'Debate',
+  plan: 'Plan',
+  writing: 'Write',
+  feedback: 'Feedback',
+}
+const STEPS: AppStep[] = ['prompt', 'debate', 'plan', 'writing', 'feedback']
+
 export default function Home() {
   const [state, dispatch] = useReducer(reducer, initialState)
 
@@ -96,6 +105,7 @@ export default function Home() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt: state.prompt }),
       })
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
       const opener: DebateOpener = await res.json()
       dispatch({ type: 'DEBATE_OPENED', opener })
     } catch {
@@ -111,6 +121,7 @@ export default function Home() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt: state.prompt, position: state.userPosition }),
       })
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
       const followUp: DebateFollowUp = await res.json()
       dispatch({ type: 'DEBATE_FOLLOWED_UP', followUp })
     } catch {
@@ -130,6 +141,7 @@ export default function Home() {
           argument: state.userArgument,
         }),
       })
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
       const plan: EssayPlan = await res.json()
       dispatch({ type: 'PLAN_GENERATED', plan })
     } catch {
@@ -137,14 +149,6 @@ export default function Home() {
     }
   }, [state.prompt, state.userPosition, state.userArgument])
 
-  const STEP_LABELS: Record<AppStep, string> = {
-    prompt: 'Prompt',
-    debate: 'Debate',
-    plan: 'Plan',
-    writing: 'Write',
-    feedback: 'Feedback',
-  }
-  const STEPS: AppStep[] = ['prompt', 'debate', 'plan', 'writing', 'feedback']
   const currentIndex = STEPS.indexOf(state.step)
 
   return (
@@ -209,7 +213,7 @@ export default function Home() {
           />
         )}
 
-        {state.step === 'feedback' && (
+        {state.step === 'feedback' && state.essay.length > 0 && (
           <FeedbackStep
             onStartOver={() => dispatch({ type: 'RESET' })}
           />
