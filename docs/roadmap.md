@@ -52,7 +52,35 @@
 
 **Issue 3: Codex reviews on PR**:
 https://github.com/trankhanh040147/ielts-gym/pull/1
--> Fix and add to AGENTS.md/CLAUDE.md
+-> Verify first to consider should fix or not, fix it and add to AGENTS.md/CLAUDE.md or somewhere so we don't repeat
+
+- 1:
+next.config.ts
+import type { NextConfig } from 'next'
+
+const nextConfig: NextConfig = {
+  output: process.env.BUILD_TARGET === 'app' ? 'export' : undefined,
+@chatgpt-codex-connector
+chatgpt-codex-connector Bot
+14 hours ago
+P1 Badge Avoid static export for endpoints requiring POST handlers
+
+When BUILD_TARGET=app, this config forces output: 'export', but the UI still posts to /api/debate/open, /api/debate/respond, and /api/plan/generate (app/page.tsx). In a static export build those POST route handlers are not available, so with the default NEXT_PUBLIC_API_URL (empty string) every AI step fails and the user cannot progress past the first screen.
+
+Useful? React with 👍 / 👎.
+
+- 2:
+app/api/debate/open/route.ts
+- Do not add any text outside the JSON`
+
+export async function POST(request: NextRequest) {
+  const { prompt } = await request.json()
+@chatgpt-codex-connector
+chatgpt-codex-connector Bot
+14 hours ago
+P2 Badge Parse request JSON inside the route fallback try block
+
+Body parsing happens before the try, so malformed JSON or an empty/non-JSON request throws before fallback logic runs and returns a 500 instead of mock data. This breaks the "always fall back" behavior for common bad-input scenarios and makes the endpoint less resilient than intended.
 
 ## Day6:
 - [ ] "Write" screen is missing Topic section
