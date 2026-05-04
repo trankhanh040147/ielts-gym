@@ -33,7 +33,7 @@ type AppAction =
   | { type: 'SET_ARGUMENT'; argument: string }
   | { type: 'PLAN_GENERATED'; plan: EssayPlan }
   | { type: 'SET_ESSAY'; essay: string }
-  | { type: 'GO_TO_WRITING' }
+  | { type: 'GO_TO_WRITING'; plan: EssayPlan }
   | { type: 'GO_TO_FEEDBACK' }
   | { type: 'SET_ERROR'; error: string }
   | { type: 'RESET' }
@@ -71,7 +71,7 @@ function reducer(state: AppState, action: AppAction): AppState {
     case 'SET_ESSAY':
       return { ...state, essay: action.essay }
     case 'GO_TO_WRITING':
-      return { ...state, step: 'writing' }
+      return { ...state, step: 'writing', plan: action.plan }
     case 'GO_TO_FEEDBACK':
       return { ...state, step: 'feedback' }
     case 'SET_ERROR':
@@ -200,7 +200,7 @@ export default function Home() {
         {state.step === 'plan' && state.plan && (
           <PlanStep
             plan={state.plan}
-            onStartWriting={() => dispatch({ type: 'GO_TO_WRITING' })}
+            onStartWriting={(p) => dispatch({ type: 'GO_TO_WRITING', plan: p })}
           />
         )}
 
