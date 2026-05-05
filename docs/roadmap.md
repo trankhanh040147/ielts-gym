@@ -54,6 +54,9 @@
 https://github.com/trankhanh040147/ielts-gym/pull/1
 -> Fix and add to AGENTS.md/CLAUDE.md
 
+## Day6:
+- [ ] "Write" screen is missing Topic section
+
 ## Backlog
 - [ ] Test feedback modes and give reviews
 - [ ] Use Claude Routines for: ...
