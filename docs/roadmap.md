@@ -47,3 +47,35 @@
 - Vấn đề hiện tại: Sau debate, plan được generate và present như final. User không thể push back, edit từng section, hay nói với AI "tôi muốn đổi argument cho Body Paragraph 2." Plan bị áp đặt thay vì co-authored.
 - Hướng giải quyết: Làm Plan step editable và revisable. Hai sub-problems:
   - (a) Free-text edit: cho user trực tiếp edit các field trong plan (position, thesis, body arguments) trước khi write.
+
+## Day6: 05/05/2026
+- [ ] Issue1: The plan generated not follow the opinion of user.
+Test case: 
+- **Topic**: In the modern world, some people argue that the primary purpose of a university education should be to provide students with the skills and knowledge needed for the workplace. Others, however, believe that the role of a university is to provide a broad range of knowledge, regardless of whether it is useful for a career. To what extent do you agree or disagree?
+- **Angle**: Students should focus on practical, job-ready subjects
+- **What is your strongest reason for this view?**: Adaptability — a flexible education prepares students for an uncertain job market
+- **Plan generated**: 
+Your position
+University students should be free to choose subjects that genuinely interest them.
+Thesis
+Although practical subjects offer clear career pathways, allowing students to pursue their passions ultimately produces more motivated learners and more innovative graduates.
+Body Paragraph 1
+
+Argument
+Student motivation is higher when studying a subject they care about.
+Support
+Intrinsic motivation leads to deeper engagement, better retention, and higher academic performance.
+Example
+Research by Deci and Ryan shows that self-determined learners outperform those driven purely by external rewards.
+Body Paragraph 2
+
+Argument
+Diverse university study fosters the innovation that economies need.
+Support
+Many breakthroughs occur at the intersection of disciplines, which only happens when students explore freely.
+Example
+Steve Jobs credited his calligraphy class at Reed College with inspiring the typography of the first Macintosh.
+Concession
+Opponents argue that studying only practical subjects guarantees employment, but a degree alone does not ensure a job in a rapidly changing economy.
+- [ ] Issue2: Introduce  example of "Research by Deci and Ryan" in Plan -> I don't think anybody know about that. Should we mention it as "The intrinsic motivation study of Ryan and Deci" ? 
+
