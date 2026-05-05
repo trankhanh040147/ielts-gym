@@ -49,6 +49,7 @@
   - (a) Free-text edit: cho user trực tiếp edit các field trong plan (position, thesis, body arguments) trước khi write.
 
 ## Day6: 05/05/2026
+### Task 1: Fix issues
 - [ ] Issue1: The plan generated not follow the opinion of user.
 Test case: 
 - **Topic**: In the modern world, some people argue that the primary purpose of a university education should be to provide students with the skills and knowledge needed for the workplace. Others, however, believe that the role of a university is to provide a broad range of knowledge, regardless of whether it is useful for a career. To what extent do you agree or disagree?
@@ -79,3 +80,6 @@ Concession
 Opponents argue that studying only practical subjects guarantees employment, but a degree alone does not ensure a job in a rapidly changing economy.
 - [ ] Issue2: Introduce  example of "Research by Deci and Ryan" in Plan -> I don't think anybody know about that. Should we mention it as "The intrinsic motivation study of Ryan and Deci" ? 
 
+### Task 2: Write the full MVP features doc
+
+### Task 3: Implement next feature
