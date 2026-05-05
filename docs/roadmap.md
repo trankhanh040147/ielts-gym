@@ -1,5 +1,9 @@
 - Time can spend: 1h/weekday, 3h/weekend
 
+## Mental notes
+- Claude is easy to reach limit, consider to find a way to continue without it. Or break smaller tasks before hand Claude
+
+
 ## Goal, Vision
 - Series 30 ngày xây dựng một sản phẩm tập luyện thi IELTS. Sản phẩm phải dùng được và bán được cho người dùng thực
 - Yếu tố đột phá (SOTA): Những sản phẩm đại trà ko đáp ứng được nhu cầu thực tế vì quá nhiều  tính năng nhưng ko đủ hiệu quả cho việc luyện IELTS. Sản phẩm này sẽ tạo ra sự khác biệt đó để đảm bảo mang lại kết quả tốt nhất cho người dùng
@@ -14,10 +18,32 @@
 - Spec: `docs/superpowers/specs/2026-04-28-day-1-mvp-design.md`
 - Claude Code handoff: `docs/superpowers/plans/2026-04-28-week-1-mvp-handoff.md`
 
-## Day2: 29/04/2026 - Next
-- Workflow UI decision: chọn `Polish-later`. Chưa dùng Claude Design ngay; dùng sau khi có screen thật, khoảng Day 5, để polish visual hierarchy/demo trust.
-- Handoff cho Claude Code bắt đầu bằng brainstorming trước khi implement.
-- Dựng `Idea-to-essay functional slice`: prompt -> stance/thesis/main ideas/examples/paragraph plan -> essay editor -> mocked feedback preview.
-- AI scope: thử AI thật cho phần triển khai ý/outline nếu nhanh; nếu lỗi thì dùng mocked fallback để không block demo.
-- Chưa làm real AI feedback trong Day 2.
-- Spec: `docs/superpowers/specs/2026-04-29-day-2-idea-to-essay-design.md`
+## Day2: 30/04/2026 - Done
+- Revised spec: AI debate step đưa vào scope Day 2 (không defer sang Day 3).
+- Flow 5 bước: Prompt → Debate (2 rounds) → Plan → Write → Mocked Feedback.
+- Schema redesign: DebateOpener, DebateFollowUp, EssayPlan — không dùng schema cũ.
+- Platform decision: Web + App via Capacitor (Option A — Next.js dual-mode). App dùng static export, API calls trỏ về Vercel. Migrate sang monorepo backend sau Week 1.
+- Model: `gemini-3-flash-preview`. Framework: Next.js 16.
+- Spec (revised): `docs/superpowers/specs/2026-04-30-day-2-revised-design.md`
+- Spec (platform): `docs/superpowers/specs/2026-05-01-platform-strategy-design.md`
+
+## Day3: 01/05/2026
+- Bắt đầu implement: scaffold Next.js 16 app, 5-step flow, Gemini integration, Capacitor setup.
+- Spec đã approved, chuyển sang writing-plans → implementation.
+
+## Day4: 04/05/2026 - Done
+- [x] Continue Day 3 implementation (session got cut off due to Claude daily limit)
+- [x] Test and merge Day 3 PR
+
+## Day5: 05/05/2026
+### Product issues to fix (from Day 4 review)
+
+**Issue 1: Debate và Plan đang là "holy receipts" — user follow, không think**
+- Vấn đề hiện tại: AI hiện ra position options và full structured plan ngay từ đầu. User chỉ việc chọn và tiếp tục — không cần tư duy gì. Điều này phá vỡ mục đích của debate step; nó là menu, không phải learning exercise.
+- Hướng giải quyết: Chuyển sang mô hình "hints on demand". Default state là blank input — user phải tự thử viết position/argument trước. AI hints (pre-filled options, argument scaffolding) ẩn sau nút "Give me a hint", chỉ reveal khi user bấm vào khi bị stuck.
+- Key principle: hints phải là lifeline, không phải default. AI nên react với những gì user viết ra, không phải hand them the answer trước khi họ thử.
+
+**Issue 2: Plan là one-way — không revise được, không có ownership**
+- Vấn đề hiện tại: Sau debate, plan được generate và present như final. User không thể push back, edit từng section, hay nói với AI "tôi muốn đổi argument cho Body Paragraph 2." Plan bị áp đặt thay vì co-authored.
+- Hướng giải quyết: Làm Plan step editable và revisable. Hai sub-problems:
+  - (a) Free-text edit: cho user trực tiếp edit các field trong plan (position, thesis, body arguments) trước khi write.
