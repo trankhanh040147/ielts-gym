@@ -1,7 +1,13 @@
 'use client'
 
 import { useReducer, useCallback } from 'react'
-import type { DebateOpener, DebateFollowUp, EssayPlan } from '@/lib/schemas'
+import type { DebateOpener, DebateFollowUp, EssayPlan, MockedFeedback } from '@/lib/schemas'
+import {
+  MOCK_FEEDBACK,
+  createFallbackDebateFollowUp,
+  createFallbackDebateOpener,
+  createFallbackEssayPlan,
+} from '@/lib/mock-data'
 import PromptStep from '@/components/steps/PromptStep'
 import DebateStep from '@/components/steps/DebateStep'
 import PlanStep from '@/components/steps/PlanStep'
@@ -20,6 +26,7 @@ interface AppState {
   userArgument: string
   plan: EssayPlan | null
   essay: string
+  feedback: MockedFeedback | null
   isLoading: boolean
   error: string | null
 }
@@ -34,7 +41,7 @@ type AppAction =
   | { type: 'PLAN_GENERATED'; plan: EssayPlan }
   | { type: 'SET_ESSAY'; essay: string }
   | { type: 'GO_TO_WRITING'; plan: EssayPlan }
-  | { type: 'GO_TO_FEEDBACK' }
+  | { type: 'FEEDBACK_GENERATED'; feedback: MockedFeedback }
   | { type: 'SET_ERROR'; error: string }
   | { type: 'RESET' }
 
@@ -48,6 +55,7 @@ const initialState: AppState = {
   userArgument: '',
   plan: null,
   essay: '',
+  feedback: null,
   isLoading: false,
   error: null,
 }
@@ -72,8 +80,8 @@ function reducer(state: AppState, action: AppAction): AppState {
       return { ...state, essay: action.essay }
     case 'GO_TO_WRITING':
       return { ...state, step: 'writing', plan: action.plan }
-    case 'GO_TO_FEEDBACK':
-      return { ...state, step: 'feedback' }
+    case 'FEEDBACK_GENERATED':
+      return { ...state, isLoading: false, step: 'feedback', feedback: action.feedback }
     case 'SET_ERROR':
       return { ...state, isLoading: false, error: action.error }
     case 'RESET':
@@ -109,7 +117,7 @@ export default function Home() {
       const opener: DebateOpener = await res.json()
       dispatch({ type: 'DEBATE_OPENED', opener })
     } catch {
-      dispatch({ type: 'SET_ERROR', error: 'Could not start debate. Please try again.' })
+      dispatch({ type: 'DEBATE_OPENED', opener: createFallbackDebateOpener(state.prompt) })
     }
   }, [state.prompt])
 
@@ -125,7 +133,10 @@ export default function Home() {
       const followUp: DebateFollowUp = await res.json()
       dispatch({ type: 'DEBATE_FOLLOWED_UP', followUp })
     } catch {
-      dispatch({ type: 'SET_ERROR', error: 'Could not continue debate. Please try again.' })
+      dispatch({
+        type: 'DEBATE_FOLLOWED_UP',
+        followUp: createFallbackDebateFollowUp(state.userPosition),
+      })
     }
   }, [state.prompt, state.userPosition])
 
@@ -145,9 +156,32 @@ export default function Home() {
       const plan: EssayPlan = await res.json()
       dispatch({ type: 'PLAN_GENERATED', plan })
     } catch {
-      dispatch({ type: 'SET_ERROR', error: 'Could not generate plan. Please try again.' })
+      dispatch({
+        type: 'PLAN_GENERATED',
+        plan: createFallbackEssayPlan(state.userPosition, state.userArgument),
+      })
     }
   }, [state.prompt, state.userPosition, state.userArgument])
+
+  const generateFeedback = useCallback(async () => {
+    dispatch({ type: 'START_LOADING' })
+    try {
+      const res = await fetch(`${API_BASE}/api/feedback/generate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          prompt: state.prompt,
+          plan: state.plan,
+          essay: state.essay,
+        }),
+      })
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      const feedback: MockedFeedback = await res.json()
+      dispatch({ type: 'FEEDBACK_GENERATED', feedback })
+    } catch {
+      dispatch({ type: 'FEEDBACK_GENERATED', feedback: MOCK_FEEDBACK })
+    }
+  }, [state.prompt, state.plan, state.essay])
 
   const currentIndex = STEPS.indexOf(state.step)
 
@@ -206,15 +240,17 @@ export default function Home() {
 
         {state.step === 'writing' && state.plan && (
           <WritingStep
+            prompt={state.prompt}
             plan={state.plan}
             essay={state.essay}
             onEssayChange={(e) => dispatch({ type: 'SET_ESSAY', essay: e })}
-            onGetFeedback={() => dispatch({ type: 'GO_TO_FEEDBACK' })}
+            onGetFeedback={generateFeedback}
           />
         )}
 
-        {state.step === 'feedback' && state.essay.length > 0 && (
+        {state.step === 'feedback' && state.feedback && (
           <FeedbackStep
+            feedback={state.feedback}
             onStartOver={() => dispatch({ type: 'RESET' })}
           />
         )}

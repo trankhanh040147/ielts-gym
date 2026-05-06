@@ -3,24 +3,23 @@
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { MOCK_FEEDBACK } from '@/lib/mock-data'
+import type { MockedFeedback } from '@/lib/schemas'
 
 interface Props {
+  feedback: MockedFeedback
   onStartOver: () => void
 }
 
-export default function FeedbackStep({ onStartOver }: Props) {
-  const feedback = MOCK_FEEDBACK
-
+export default function FeedbackStep({ feedback, onStartOver }: Props) {
   return (
     <div className="flex flex-col gap-6 max-w-2xl mx-auto">
       <div>
         <div className="flex items-center gap-3">
           <h2 className="text-xl font-semibold">Feedback Preview</h2>
-          <Badge variant="secondary">Demo — real AI feedback coming soon</Badge>
+          <Badge variant="secondary">AI feedback</Badge>
         </div>
         <p className="text-muted-foreground mt-1 text-sm">
-          This is a preview of what structured feedback will look like.
+          Focus on these highest-impact changes before your next draft.
         </p>
       </div>
 
@@ -49,7 +48,7 @@ export default function FeedbackStep({ onStartOver }: Props) {
           <CardTitle className="text-sm">Rewrite sample</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm italic text-muted-foreground">"{feedback.rewrite_sample}"</p>
+          <p className="text-sm italic text-muted-foreground">&ldquo;{feedback.rewrite_sample}&rdquo;</p>
         </CardContent>
       </Card>
 

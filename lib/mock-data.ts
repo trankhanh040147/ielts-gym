@@ -14,6 +14,24 @@ export const MOCK_DEBATE_OPENER: DebateOpener = {
   ],
 }
 
+export function createFallbackDebateOpener(prompt: unknown): DebateOpener {
+  if (typeof prompt !== 'string' || !prompt.trim()) {
+    return MOCK_DEBATE_OPENER
+  }
+
+  const task = prompt.trim()
+
+  return {
+    topic_summary: `This essay asks you to respond to this question: ${task}`,
+    question: 'What position do you want to argue?',
+    position_options: [
+      'I mostly agree with the statement',
+      'I mostly disagree with the statement',
+      'I think both sides have value',
+    ],
+  }
+}
+
 export const MOCK_DEBATE_FOLLOW_UP: DebateFollowUp = {
   acknowledgment:
     'Good choice — personal interest drives deeper learning and long-term success.',
@@ -23,6 +41,24 @@ export const MOCK_DEBATE_FOLLOW_UP: DebateFollowUp = {
     'Innovation — breadth of study leads to creative breakthroughs',
     'Adaptability — a flexible education prepares students for an uncertain job market',
   ],
+}
+
+export function createFallbackDebateFollowUp(position: unknown): DebateFollowUp {
+  if (typeof position !== 'string' || !position.trim()) {
+    return MOCK_DEBATE_FOLLOW_UP
+  }
+
+  const learnerPosition = position.trim()
+
+  return {
+    acknowledgment: `Your position is clear: ${learnerPosition}`,
+    question: 'What is your strongest reason for this view?',
+    argument_hints: [
+      'Impact — who benefits or loses because of this view?',
+      'Cause — why does this problem or benefit happen?',
+      'Example — what real situation would make this view convincing?',
+    ],
+  }
 }
 
 export const MOCK_ESSAY_PLAN: EssayPlan = {
@@ -37,7 +73,7 @@ export const MOCK_ESSAY_PLAN: EssayPlan = {
       support:
         'Intrinsic motivation leads to deeper engagement, better retention, and higher academic performance.',
       example:
-        'Research by Deci and Ryan shows that self-determined learners outperform those driven purely by external rewards.',
+        'For example, a student who chooses computer science because they enjoy building apps is more likely to practise beyond class and improve quickly.',
     },
     {
       label: 'Body Paragraph 2',
@@ -55,6 +91,49 @@ export const MOCK_ESSAY_PLAN: EssayPlan = {
     'End each body paragraph with a sentence that links back to your thesis.',
     'Keep your conclusion short — restate your position and two main reasons in two sentences.',
   ],
+}
+
+export function createFallbackEssayPlan(position: unknown, argument: unknown): EssayPlan {
+  if (typeof position !== 'string' || typeof argument !== 'string') {
+    return MOCK_ESSAY_PLAN
+  }
+
+  const learnerPosition = position.trim()
+  const learnerArgument = argument.trim()
+
+  if (!learnerPosition || !learnerArgument) {
+    return MOCK_ESSAY_PLAN
+  }
+
+  return {
+    position: learnerPosition,
+    thesis: `${learnerPosition} The strongest reason is that ${learnerArgument.toLowerCase()}.`,
+    body: [
+      {
+        label: 'Body Paragraph 1',
+        argument: learnerArgument,
+        support:
+          'This reason directly supports the learner\'s position and gives the essay a clear direction.',
+        example:
+          'For example, graduates often need to change roles as industries evolve, so adaptability helps them keep learning and stay employable.',
+      },
+      {
+        label: 'Body Paragraph 2',
+        argument: 'A second supporting reason can show how this position works in real life.',
+        support:
+          'Adding a real-world effect makes the essay more convincing and keeps both body paragraphs connected to the same stance.',
+        example:
+          'For example, describe a common school, work, or family situation where this view would lead to a better outcome.',
+      },
+    ],
+    concession:
+      'Some people may support the opposite view, but this argument is stronger when the essay explains the practical result of the learner\'s position.',
+    writing_tips: [
+      'Keep both body paragraphs connected to your chosen position.',
+      'Use the first body paragraph for your strongest reason, then make the second paragraph support the same side.',
+      'Mention the opposing view briefly, but do not let it become your main argument.',
+    ],
+  }
 }
 
 export const MOCK_FEEDBACK: MockedFeedback = {

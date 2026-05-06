@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { generateJSON } from '@/lib/gemini'
 import { DebateFollowUpSchema } from '@/lib/schemas'
-import { MOCK_DEBATE_FOLLOW_UP } from '@/lib/mock-data'
+import { createFallbackDebateFollowUp } from '@/lib/mock-data'
 
 const PROMPT_TEMPLATE = (task: string, position: string) =>
   `You are an IELTS Writing Task 2 coach.
@@ -24,13 +24,15 @@ Rules:
 - Do not add any text outside the JSON`
 
 export async function POST(request: NextRequest) {
-  const { prompt, position } = await request.json()
+  let body: { prompt?: string; position?: string } | undefined
 
   try {
+    body = await request.json()
+    const { prompt = '', position = '' } = body ?? {}
     const raw = await generateJSON(PROMPT_TEMPLATE(prompt, position))
     const parsed = DebateFollowUpSchema.parse(raw)
     return NextResponse.json(parsed)
   } catch {
-    return NextResponse.json(MOCK_DEBATE_FOLLOW_UP)
+    return NextResponse.json(createFallbackDebateFollowUp(body?.position))
   }
 }

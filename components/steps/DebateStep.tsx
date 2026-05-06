@@ -38,7 +38,7 @@ export default function DebateStep({
   return (
     <div className="flex flex-col gap-6 max-w-2xl mx-auto">
       <div>
-        <h2 className="text-xl font-semibold">Let's find your angle</h2>
+        <h2 className="text-xl font-semibold">Let&apos;s find your angle</h2>
         <p className="text-muted-foreground mt-1 text-sm">{debateOpener.topic_summary}</p>
       </div>
 

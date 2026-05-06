@@ -7,7 +7,13 @@ const mockGen = generateJSON as jest.Mock
 
 import { POST } from '@/app/api/debate/open/route'
 
+const post = (req: Request) => POST(req as unknown as Parameters<typeof POST>[0])
+
 describe('POST /api/debate/open', () => {
+  beforeEach(() => {
+    mockGen.mockReset()
+  })
+
   const validOpener = {
     topic_summary: 'Test summary.',
     question: 'Which side?',
@@ -20,7 +26,7 @@ describe('POST /api/debate/open', () => {
       method: 'POST',
       body: JSON.stringify({ prompt: 'test prompt' }),
     })
-    const res = await POST(req as any)
+    const res = await post(req)
     const data = await res.json()
     expect(data.topic_summary).toBe('Test summary.')
     expect(data.position_options).toHaveLength(2)
@@ -30,11 +36,11 @@ describe('POST /api/debate/open', () => {
     mockGen.mockRejectedValue(new Error('AI error'))
     const req = new Request('http://localhost/api/debate/open', {
       method: 'POST',
-      body: JSON.stringify({ prompt: 'test prompt' }),
+      body: JSON.stringify({ prompt: 'Some people think children should start school early.' }),
     })
-    const res = await POST(req as any)
+    const res = await post(req)
     const data = await res.json()
-    expect(data.topic_summary).toBeDefined()
+    expect(data.topic_summary).toContain('children should start school early')
     expect(Array.isArray(data.position_options)).toBe(true)
   })
 
@@ -44,8 +50,19 @@ describe('POST /api/debate/open', () => {
       method: 'POST',
       body: JSON.stringify({ prompt: 'test prompt' }),
     })
-    const res = await POST(req as any)
+    const res = await post(req)
     const data = await res.json()
     expect(data.position_options).toBeDefined()
+  })
+
+  it('falls back to mock data when request body is malformed', async () => {
+    const req = new Request('http://localhost/api/debate/open', {
+      method: 'POST',
+      body: '{',
+    })
+    const res = await post(req)
+    const data = await res.json()
+    expect(data.topic_summary).toBeDefined()
+    expect(Array.isArray(data.position_options)).toBe(true)
   })
 })
