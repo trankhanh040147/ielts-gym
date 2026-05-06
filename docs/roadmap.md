@@ -176,7 +176,6 @@ https://github.com/trankhanh040147/ielts-gym/pull/1
 - Verdict: **Legitimate bug — fix.** Move `request.json()` inside the try block in all three routes.
 
 ### Task ?: Update Write UI
-
 - [ ] "Write" screen is missing Topic section
 
 ### Task 1: Fix issues
