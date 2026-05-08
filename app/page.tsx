@@ -42,6 +42,8 @@ type AppAction =
   | { type: 'SET_ESSAY'; essay: string }
   | { type: 'GO_TO_WRITING'; plan: EssayPlan }
   | { type: 'FEEDBACK_GENERATED'; feedback: MockedFeedback }
+  | { type: 'RETURN_TO_DEBATE_FOR_REGEN' }
+  | { type: 'GO_TO_CURRENT_PLAN' }
   | { type: 'SET_ERROR'; error: string }
   | { type: 'RESET' }
 
@@ -82,6 +84,10 @@ function reducer(state: AppState, action: AppAction): AppState {
       return { ...state, step: 'writing', plan: action.plan }
     case 'FEEDBACK_GENERATED':
       return { ...state, isLoading: false, step: 'feedback', feedback: action.feedback }
+    case 'RETURN_TO_DEBATE_FOR_REGEN':
+      return { ...state, step: 'debate', debateRound: 1, error: null }
+    case 'GO_TO_CURRENT_PLAN':
+      return { ...state, step: 'plan', error: null }
     case 'SET_ERROR':
       return { ...state, isLoading: false, error: action.error }
     case 'RESET':
@@ -224,10 +230,12 @@ export default function Home() {
             userArgument={state.userArgument}
             isLoading={state.isLoading}
             error={state.error}
+            hasPlan={state.plan !== null}
             onSelectPosition={(p) => dispatch({ type: 'SET_POSITION', position: p })}
             onConfirmPosition={confirmPosition}
             onArgumentChange={(a) => dispatch({ type: 'SET_ARGUMENT', argument: a })}
             onGeneratePlan={generatePlan}
+            onBackToPlan={() => dispatch({ type: 'GO_TO_CURRENT_PLAN' })}
           />
         )}
 
@@ -235,6 +243,7 @@ export default function Home() {
           <PlanStep
             plan={state.plan}
             onStartWriting={(p) => dispatch({ type: 'GO_TO_WRITING', plan: p })}
+            onRegenerate={() => dispatch({ type: 'RETURN_TO_DEBATE_FOR_REGEN' })}
           />
         )}
 

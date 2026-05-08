@@ -13,10 +13,12 @@ interface Props {
   userArgument: string
   isLoading: boolean
   error: string | null
+  hasPlan: boolean
   onSelectPosition: (p: string) => void
   onConfirmPosition: () => void
   onArgumentChange: (a: string) => void
   onGeneratePlan: () => void
+  onBackToPlan: () => void
 }
 
 export default function DebateStep({
@@ -27,19 +29,32 @@ export default function DebateStep({
   userArgument,
   isLoading,
   error,
+  hasPlan,
   onSelectPosition,
   onConfirmPosition,
   onArgumentChange,
   onGeneratePlan,
+  onBackToPlan,
 }: Props) {
   const [showPositionHints, setShowPositionHints] = useState(false)
   const [showArgumentHints, setShowArgumentHints] = useState(false)
 
   return (
     <div className="flex flex-col gap-6 max-w-2xl mx-auto">
-      <div>
-        <h2 className="text-xl font-semibold">Let&apos;s find your angle</h2>
-        <p className="text-muted-foreground mt-1 text-sm">{debateOpener.topic_summary}</p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h2 className="text-xl font-semibold">Let&apos;s find your angle</h2>
+          <p className="text-muted-foreground mt-1 text-sm">{debateOpener.topic_summary}</p>
+        </div>
+        {hasPlan && (
+          <button
+            onClick={onBackToPlan}
+            className="text-sm text-muted-foreground underline-offset-4 hover:underline shrink-0"
+            type="button"
+          >
+            ← Back to current plan
+          </button>
+        )}
       </div>
 
       {debateRound === 1 && (

@@ -5,14 +5,17 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Textarea } from '@/components/ui/textarea'
 import type { EssayPlan } from '@/lib/schemas'
+import { planToMarkdown } from '@/lib/plan-utils'
 
 interface Props {
   plan: EssayPlan
   onStartWriting: (plan: EssayPlan) => void
+  onRegenerate: () => void
 }
 
-export default function PlanStep({ plan, onStartWriting }: Props) {
+export default function PlanStep({ plan, onStartWriting, onRegenerate }: Props) {
   const [edited, setEdited] = useState<EssayPlan>(plan)
+  const [copyState, setCopyState] = useState<'idle' | 'copied' | 'error'>('idle')
 
   const updateBody = (index: number, field: keyof EssayPlan['body'][number], value: string) => {
     setEdited((prev) => ({
@@ -21,14 +24,41 @@ export default function PlanStep({ plan, onStartWriting }: Props) {
     }))
   }
 
+  const copyPlan = async () => {
+    try {
+      await navigator.clipboard.writeText(planToMarkdown(edited))
+      setCopyState('copied')
+      setTimeout(() => setCopyState('idle'), 2000)
+    } catch {
+      setCopyState('error')
+      setTimeout(() => setCopyState('idle'), 3000)
+    }
+  }
+
   return (
     <div className="flex flex-col gap-6 max-w-2xl mx-auto">
-      <div>
-        <h2 className="text-xl font-semibold">Your Essay Plan</h2>
-        <p className="text-muted-foreground mt-1 text-sm">
-          Edit any section to make it yours, then start writing.
-        </p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h2 className="text-xl font-semibold">Your Essay Plan</h2>
+          <p className="text-muted-foreground mt-1 text-sm">
+            Edit any section to make it yours, then start writing.
+          </p>
+        </div>
+        <div className="flex gap-2 shrink-0">
+          <Button variant="outline" size="sm" onClick={copyPlan}>
+            {copyState === 'copied' ? 'Copied!' : copyState === 'error' ? 'Copy failed' : 'Copy plan'}
+          </Button>
+          <Button variant="outline" size="sm" onClick={onRegenerate}>
+            Regenerate
+          </Button>
+        </div>
       </div>
+
+      {copyState === 'error' && (
+        <p className="text-sm text-destructive">
+          Could not copy to clipboard. Select and copy the plan manually.
+        </p>
+      )}
 
       <Card>
         <CardContent className="pt-4 flex flex-col gap-3">
