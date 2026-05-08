@@ -214,3 +214,76 @@ Opponents argue that studying only practical subjects guarantees employment, but
 ### Task 2: Write the full MVP features doc
 
 ### Task 3: Implement next feature
+
+## Day7: 08/05/2026
+
+Goal: make the Plan step more useful and reversible without adding heavy draft/version management.
+
+### Task 1: Copy plan
+
+- [ ] Add `Copy plan` button in Plan step.
+- [ ] Copy the current edited plan, not the original AI plan.
+- [ ] Use Markdown/plain-text format so learners can paste into Notes, Docs, or chat.
+- [ ] Show lightweight copied feedback after success.
+- [ ] If clipboard fails, keep the plan visible and show a non-blocking error.
+
+Copy format should be Markdown by default:
+
+```md
+# IELTS Writing Task 2 Plan
+
+## Position
+...
+
+## Thesis
+...
+
+## Body Paragraph 1
+- Argument: ...
+- Support: ...
+- Example: ...
+
+## Body Paragraph 2
+- Argument: ...
+- Support: ...
+- Example: ...
+
+## Concession
+...
+
+## Writing Tips
+- ...
+```
+
+### Task 2: Regenerate plan safely
+
+- [ ] Add `Regenerate plan` button in Plan step.
+- [ ] Clicking it returns user to Debate round 1.
+- [ ] Keep previous opinion prefilled so user can edit it.
+- [ ] Keep current plan in state while user is regenerating.
+- [ ] Show `Back to current plan` from Debate when a plan already exists.
+- [ ] Only replace current plan after a new plan is generated successfully or fallback plan is generated.
+
+State behavior:
+
+- Current plan remains the source of truth until replacement plan generation finishes.
+- `Regenerate plan` should keep `userPosition` and `userArgument`; Debate starts at round 1 so user can edit the opinion first.
+- `Back to current plan` returns to Plan without changing plan, position, argument, essay, or feedback.
+
+### Acceptance criteria
+
+- User can copy an edited plan as readable Markdown/text.
+- User can try to regenerate without losing the current plan.
+- User can change their mind and return to the current plan.
+- The regenerate flow preserves the think-first behavior from Day 5.
+- The full Prompt -> Debate -> Plan -> Write -> Feedback loop still works.
+
+### Suggested implementation order
+
+1. Add a plan-to-Markdown formatter and unit tests.
+2. Add copy button behavior in `PlanStep`, including success/error UI state.
+3. Add reducer actions for `RETURN_TO_DEBATE_FOR_REGEN` and `GO_TO_CURRENT_PLAN`.
+4. Wire `Regenerate plan` from Plan to Debate round 1 while preserving the current plan.
+5. Show `Back to current plan` in Debate only when a current plan exists.
+6. Add tests for copy, regeneration navigation, plan preservation, and replacement after new generation.
+7. Run verification commands: tests, lint, build, and manual 5-step flow.
