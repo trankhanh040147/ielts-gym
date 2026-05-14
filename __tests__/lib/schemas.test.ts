@@ -1,6 +1,5 @@
 import {
   DebateOpenerSchema,
-  DebateFollowUpSchema,
   EssayPlanSchema,
   MockedFeedbackSchema,
 } from '@/lib/schemas'

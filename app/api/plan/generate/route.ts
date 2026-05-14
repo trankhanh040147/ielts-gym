@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { generateJSON } from '@/lib/gemini'
 import { EssayPlanSchema } from '@/lib/schemas'
-import { MOCK_ESSAY_PLAN } from '@/lib/mock-data'
+import { createFallbackEssayPlan } from '@/lib/mock-data'
 
 const PROMPT_TEMPLATE = (task: string, position: string, argument: string) =>
   `You are an IELTS Writing Task 2 coach creating a structured essay plan for a band 5.5-6.5 learner.
@@ -36,18 +36,22 @@ Respond with ONLY valid JSON:
 
 Rules:
 - Exactly 2 body paragraphs
+- Every field must support the learner's stated position and main argument
+- Do not switch sides or replace the learner's position with a different opinion
 - writing_tips must be specific to this essay, not generic advice
 - concession is optional — omit the field if it does not add value
 - Do not add any text outside the JSON`
 
 export async function POST(request: NextRequest) {
-  const { prompt, position, argument } = await request.json()
+  let body: { prompt?: string; position?: string; argument?: string } | undefined
 
   try {
+    body = await request.json()
+    const { prompt = '', position = '', argument = '' } = body ?? {}
     const raw = await generateJSON(PROMPT_TEMPLATE(prompt, position, argument))
     const parsed = EssayPlanSchema.parse(raw)
     return NextResponse.json(parsed)
   } catch {
-    return NextResponse.json(MOCK_ESSAY_PLAN)
+    return NextResponse.json(createFallbackEssayPlan(body?.position, body?.argument))
   }
 }

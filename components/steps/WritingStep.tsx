@@ -6,13 +6,14 @@ import { Separator } from '@/components/ui/separator'
 import type { EssayPlan } from '@/lib/schemas'
 
 interface Props {
+  prompt: string
   plan: EssayPlan
   essay: string
   onEssayChange: (v: string) => void
   onGetFeedback: () => void
 }
 
-export default function WritingStep({ plan, essay, onEssayChange, onGetFeedback }: Props) {
+export default function WritingStep({ prompt, plan, essay, onEssayChange, onGetFeedback }: Props) {
   const wordCount = essay.trim() ? essay.trim().split(/\s+/).length : 0
 
   return (
@@ -26,6 +27,11 @@ export default function WritingStep({ plan, essay, onEssayChange, onGetFeedback 
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="flex flex-col gap-3 text-sm">
+          <div className="rounded-lg border p-4 flex flex-col gap-1">
+            <p className="font-medium text-foreground">Topic</p>
+            <p className="text-muted-foreground">{prompt}</p>
+          </div>
+
           <p className="font-medium">Plan reference</p>
           <div className="rounded-lg border p-4 flex flex-col gap-3 text-muted-foreground">
             <div>
